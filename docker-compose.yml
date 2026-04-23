@@ -1,0 +1,88 @@
+version: '3.8'
+
+# =====================================================
+# HabitFlow - Docker Compose Configuration
+# Orchestrează: PostgreSQL, Backend API, Frontend Web
+# =====================================================
+
+services:
+
+  # ---- Baza de date PostgreSQL ----
+  postgres:
+    image: postgres:15-alpine
+    container_name: habitflow_db
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: habitflow
+      POSTGRES_USER: habitflow_user
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+      # Setări PostgreSQL pentru performanță
+      POSTGRES_INITDB_ARGS: "--encoding=UTF8 --locale=C"
+    volumes:
+      # Date persistente
+      - postgres_data:/var/lib/postgresql/data
+      # Script de inițializare rulat la prima pornire
+      - ./database/init.sql:/docker-entrypoint-initdb.d/01_init.sql:ro
+    ports:
+      - "5432:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U habitflow_user -d habitflow"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - habitflow_net
+
+  # ---- Backend Node.js/Express API ----
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: habitflow_api
+    restart: unless-stopped
+    environment:
+      NODE_ENV: production
+      PORT: 3000
+      # Conexiune la PostgreSQL
+      DB_HOST: postgres
+      DB_PORT: 5432
+      DB_NAME: habitflow
+      DB_USER: habitflow_user
+      DB_PASSWORD: ${DB_PASSWORD}
+      # JWT secret pentru autentificare (minim 32 caractere)
+      JWT_SECRET: ${JWT_SECRET}
+      # Cheie AES-256 pentru criptarea datelor (exact 64 caractere hex = 32 bytes)
+      ENCRYPTION_KEY: ${ENCRYPTION_KEY}
+      # Parola implicită admin (va fi schimbată la prima logare)
+      ADMIN_PASSWORD: ${ADMIN_PASSWORD}
+    ports:
+      - "3000:3000"  # Expus direct pentru apeluri API din browser
+    depends_on:
+      postgres:
+        condition: service_healthy
+    networks:
+      - habitflow_net
+
+  # ---- Frontend Nginx (servește HTML static + proxy spre API) ----
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: habitflow_web
+    restart: unless-stopped
+    ports:
+      - "80:80"
+    depends_on:
+      - backend
+    networks:
+      - habitflow_net
+
+# ---- Volume persistent pentru PostgreSQL ----
+volumes:
+  postgres_data:
+    driver: local
+
+# ---- Rețea internă Docker ----
+networks:
+  habitflow_net:
+    driver: bridge

@@ -1,0 +1,531 @@
+<!DOCTYPE html>
+<html lang="ro">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>HabitFlow</title>
+  <!-- Google Fonts: Syne (titluri) + DM Sans (body) -->
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+
+</head>
+<body>
+
+<!-- =====================================================
+     PAGINA DE AUTENTIFICARE (Login / Register)
+     Vizibilă doar când utilizatorul nu e logat
+===================================================== -->
+<div id="auth-page">
+  <div class="auth-box">
+    <div class="auth-logo">HabitFlow</div>
+    <p class="auth-tagline">Construiește obiceiuri, inspiră-i pe alții ✨</p>
+
+    <!-- Tab-uri Login / Register -->
+    <div class="auth-tabs">
+      <button class="auth-tab active" onclick="showAuthTab('login')">Intră în cont</button>
+      <button class="auth-tab" onclick="showAuthTab('register')">Cont nou</button>
+    </div>
+
+    <!-- Formular Login -->
+    <div id="login-form">
+      <div id="login-error"></div>
+      <div class="form-group">
+        <label class="form-label">Username</label>
+        <input class="form-input" type="text" id="login-username" placeholder="username-ul tău" autocomplete="username">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Parolă</label>
+        <input class="form-input" type="password" id="login-password" placeholder="••••••••" autocomplete="current-password">
+      </div>
+      <button class="btn btn-primary btn-full" onclick="login()">🔐 Intră în cont</button>
+      <p style="text-align:center; font-size:12px; color:var(--text2); margin-top:12px;">
+        Demo admin: <strong>admin</strong> / <strong>Admin@HabitFlow2024!</strong>
+      </p>
+    </div>
+
+    <!-- Formular Register -->
+    <div id="register-form" style="display:none">
+      <div id="register-error"></div>
+      <div class="form-group">
+        <label class="form-label">Username</label>
+        <input class="form-input" type="text" id="reg-username" placeholder="alege un username unic">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Email</label>
+        <input class="form-input" type="email" id="reg-email" placeholder="email@exemplu.com">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Parolă (minim 6 caractere)</label>
+        <input class="form-input" type="password" id="reg-password" placeholder="••••••••">
+      </div>
+      <button class="btn btn-primary btn-full" onclick="register()">🚀 Creează cont</button>
+    </div>
+  </div>
+</div>
+
+<!-- =====================================================
+     APLICAȚIA PRINCIPALĂ (vizibilă după login)
+===================================================== -->
+<div id="app" style="display:none">
+
+  <!-- ---- Sidebar de navigare ---- -->
+  <nav id="sidebar">
+    <div class="sidebar-logo">Habit<span>Flow</span></div>
+
+    <div class="nav-section">
+      <div class="nav-label">Principal</div>
+      <button class="nav-btn active" data-view="dashboard" onclick="navigate('dashboard')">
+        <span class="icon">🏠</span>
+        <span>Dashboard</span>
+      </button>
+      <button class="nav-btn" data-view="calendar" onclick="navigate('calendar')">
+        <span class="icon">📅</span>
+        <span>Calendar</span>
+      </button>
+
+      <div class="nav-label" style="margin-top:8px">Social</div>
+      <button class="nav-btn" data-view="feed" onclick="navigate('feed')">
+        <span class="icon">🌐</span>
+        <span>Feed Public</span>
+      </button>
+      <button class="nav-btn" data-view="friends" onclick="navigate('friends')">
+        <span class="icon">👥</span>
+        <span>Prieteni</span>
+        <span class="nav-badge" id="friend-req-badge" style="display:none">0</span>
+      </button>
+      <button class="nav-btn" data-view="messages" onclick="navigate('messages')">
+        <span class="icon">💬</span>
+        <span>Mesaje</span>
+        <span class="nav-badge" id="unread-badge" style="display:none">0</span>
+      </button>
+    </div>
+
+    <!-- Butonul Admin (vizibil doar pentru admini) -->
+    <div class="nav-section" id="admin-nav" style="display:none">
+      <div class="nav-label" style="margin-top:8px">Administrare</div>
+      <button class="nav-btn" data-view="admin" onclick="navigate('admin')">
+        <span class="icon">🛡️</span>
+        <span>Moderare</span>
+      </button>
+    </div>
+
+    <!-- Footer sidebar: user info + logout -->
+    <div class="sidebar-footer">
+      <div class="user-card">
+        <div class="user-avatar" id="sidebar-avatar">U</div>
+        <div class="user-info">
+          <div class="user-name" id="sidebar-username">User</div>
+          <div class="user-role" id="sidebar-role">Utilizator</div>
+        </div>
+      </div>
+      <button class="nav-btn" onclick="logout()" style="color:var(--red)">
+        <span class="icon">🚪</span>
+        <span>Deconectare</span>
+      </button>
+    </div>
+  </nav>
+
+  <!-- ---- Zona de conținut principal ---- -->
+  <main id="content">
+
+    <!-- VIEW: Dashboard - habituirile mele -->
+    <div id="view-dashboard" class="view">
+      <div class="section-title">
+        <span class="title-icon">🏠</span>
+        <span>Habiturile mele</span>
+        <button class="btn btn-primary btn-sm" style="margin-left:auto" onclick="openHabitModal()">
+          + Habit nou
+        </button>
+      </div>
+
+      <!-- Statistici rapide -->
+      <div class="dashboard-stats" id="dash-stats">
+        <div class="ds-card">
+          <span class="ds-icon">📋</span>
+          <div class="ds-info">
+            <div class="ds-value" id="stat-total">0</div>
+            <div class="ds-label">Habituiri active</div>
+          </div>
+        </div>
+        <div class="ds-card">
+          <span class="ds-icon">✅</span>
+          <div class="ds-info">
+            <div class="ds-value" id="stat-today">0</div>
+            <div class="ds-label">Completate azi</div>
+          </div>
+        </div>
+        <div class="ds-card">
+          <span class="ds-icon">🔥</span>
+          <div class="ds-info">
+            <div class="ds-value" id="stat-streak">0</div>
+            <div class="ds-label">Zile consecutive</div>
+          </div>
+        </div>
+        <div class="ds-card">
+          <span class="ds-icon">👥</span>
+          <div class="ds-info">
+            <div class="ds-value" id="stat-public">0</div>
+            <div class="ds-label">Habituiri publice</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Grid de habituiri -->
+      <div id="habits-grid" class="habits-grid">
+        <div class="loading"><div class="spinner"></div> Se încarcă...</div>
+      </div>
+    </div>
+
+    <!-- VIEW: Calendar -->
+    <div id="view-calendar" class="view" style="display:none">
+      <div class="section-title">
+        <span class="title-icon">📅</span>
+        <span>Calendar</span>
+      </div>
+
+      <div style="display:grid;grid-template-columns:auto 1fr;gap:20px;align-items:start">
+
+        <!-- COLOANA STANGA: Grila calendar -->
+        <div class="card" style="width:460px;flex-shrink:0">
+          <div class="calendar-nav">
+            <button class="btn btn-secondary btn-sm" onclick="calNav(-1)">&#8249;</button>
+            <div class="cal-month" id="cal-month-label">Ianuarie 2024</div>
+            <button class="btn btn-secondary btn-sm" onclick="calNav(1)">&#8250;</button>
+          </div>
+          <div class="calendar-grid" id="calendar-grid">
+            <div class="cal-day-header">Lun</div>
+            <div class="cal-day-header">Mar</div>
+            <div class="cal-day-header">Mie</div>
+            <div class="cal-day-header">Joi</div>
+            <div class="cal-day-header">Vin</div>
+            <div class="cal-day-header">Sam</div>
+            <div class="cal-day-header">Dum</div>
+          </div>
+          <div style="display:flex;gap:16px;margin-top:16px;font-size:12px;color:var(--text2)">
+            <span>&#9898; Nicio completare</span>
+            <span>&#128994; Partial</span>
+            <span>&#128993; Zi completa</span>
+          </div>
+        </div>
+
+        <!-- COLOANA DREAPTA: Detalii zi selectata -->
+        <div id="cal-day-detail" class="card" style="min-height:260px">
+          <div id="cal-day-empty" style="display:flex;flex-direction:column;align-items:center;justify-content:center;padding:40px 20px;color:var(--text2)">
+            <div style="font-size:48px;opacity:0.3;margin-bottom:12px">&#128197;</div>
+            <div style="font-size:14px">Selecteaza o zi din calendar</div>
+            <div style="font-size:12px;margin-top:4px">pentru a vedea habiturile completate</div>
+          </div>
+          <div id="cal-day-content" style="display:none">
+            <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;padding-bottom:12px;border-bottom:1px solid var(--border)">
+              <div>
+                <div id="cal-detail-title" style="font-family:'Syne',sans-serif;font-weight:700;font-size:16px"></div>
+                <div id="cal-detail-subtitle" style="font-size:12px;color:var(--text2);margin-top:2px"></div>
+              </div>
+              <div id="cal-detail-badge" style="font-size:22px"></div>
+            </div>
+            <div id="cal-detail-list"></div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- VIEW: Feed Social -->
+    <div id="view-feed" class="view" style="display:none">
+      <div class="section-title">
+        <span class="title-icon">🌐</span>
+        <span>Feed Public</span>
+      </div>
+      <p style="color:var(--text2);font-size:14px;margin-bottom:20px">
+        Habituirile publice ale comunității. Inspiră-te și încurajează-i pe alții! 💪
+      </p>
+      <div id="feed-list">
+        <div class="loading"><div class="spinner"></div> Se încarcă...</div>
+      </div>
+      <div style="text-align:center;margin-top:16px">
+        <button class="btn btn-secondary" id="load-more-btn" onclick="loadMoreFeed()" style="display:none">
+          Încarcă mai mult
+        </button>
+      </div>
+    </div>
+
+    <!-- VIEW: Mesaje -->
+    <div id="view-messages" class="view" style="display:none">
+      <div class="section-title">
+        <span class="title-icon">💬</span>
+        <span>Mesaje de Încurajare</span>
+        <button class="btn btn-primary btn-sm" style="margin-left:auto" onclick="openSendMessage()">
+          ✉️ Mesaj nou
+        </button>
+      </div>
+
+      <div class="messages-layout">
+        <!-- Lista mesajelor -->
+        <div class="msg-list">
+          <div class="msg-list-header">
+            <div style="display:flex;gap:8px">
+              <button class="btn btn-sm" id="tab-inbox" onclick="switchMsgTab('inbox')" style="flex:1;background:var(--bg3);color:var(--accent)">📥 Primite</button>
+              <button class="btn btn-sm" id="tab-sent" onclick="switchMsgTab('sent')" style="flex:1;background:transparent;color:var(--text2)">📤 Trimise</button>
+            </div>
+          </div>
+          <div id="msg-list-items">
+            <div class="loading"><div class="spinner"></div></div>
+          </div>
+        </div>
+
+        <!-- Conținut mesaj selectat -->
+        <div class="msg-content">
+          <div id="msg-detail" class="msg-body">
+            <div class="msg-empty">
+              <div class="msg-empty-icon">💬</div>
+              <p>Selectează un mesaj din stânga</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+
+    <!-- VIEW: Prieteni -->
+    <div id="view-friends" class="view" style="display:none">
+      <div class="section-title">
+        <span class="title-icon">👥</span>
+        <span>Prieteni</span>
+      </div>
+
+      <!-- Layout: coloana stanga (lista + cereri) | coloana dreapta (cautare + habituiri prieten) -->
+      <div style="display:grid;grid-template-columns:320px 1fr;gap:16px;min-height:calc(100vh - 180px)">
+
+        <!-- COLOANA STANGA -->
+        <div style="display:flex;flex-direction:column;gap:12px">
+
+          <!-- Cereri primite -->
+          <div class="card" id="friend-requests-card">
+            <div style="font-weight:700;font-size:14px;margin-bottom:12px;color:var(--accent)">
+              Cereri primite <span id="req-count" style="font-size:12px;color:var(--text2)"></span>
+            </div>
+            <div id="friend-requests-list">
+              <div class="loading"><div class="spinner"></div></div>
+            </div>
+          </div>
+
+          <!-- Lista prieteni -->
+          <div class="card" style="flex:1">
+            <div style="font-weight:700;font-size:14px;margin-bottom:12px">
+              Prietenii mei <span id="friends-count" style="font-size:12px;color:var(--text2)"></span>
+            </div>
+            <div id="friends-list">
+              <div class="loading"><div class="spinner"></div></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- COLOANA DREAPTA -->
+        <div style="display:flex;flex-direction:column;gap:12px">
+
+          <!-- Cautare utilizatori -->
+          <div class="card">
+            <div style="font-weight:700;font-size:14px;margin-bottom:12px">Adauga prieten</div>
+            <div style="display:flex;gap:8px">
+              <input class="form-input" type="text" id="friend-search-input"
+                placeholder="Cauta dupa username..."
+                oninput="searchUsers(this.value)"
+                style="flex:1">
+            </div>
+            <div id="friend-search-results" style="margin-top:10px"></div>
+          </div>
+
+          <!-- Habiturile prietenului selectat -->
+          <div class="card" id="friend-habits-panel" style="display:none;flex:1">
+            <div style="font-weight:700;font-size:14px;margin-bottom:12px" id="friend-habits-title">
+              Habiturile prietenului
+            </div>
+            <div id="friend-habits-list"></div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- VIEW: Admin Panel -->
+    <div id="view-admin" class="view" style="display:none">
+      <div class="section-title">
+        <span class="title-icon">🛡️</span>
+        <span>Panou de Moderare</span>
+        <span class="badge badge-admin" style="margin-left:8px">ADMIN</span>
+      </div>
+
+      <!-- Tab-uri Admin -->
+      <div class="admin-tabs">
+        <button class="admin-tab active" onclick="switchAdminTab('stats')">📊 Statistici</button>
+        <button class="admin-tab" onclick="switchAdminTab('users')">👥 Utilizatori</button>
+        <button class="admin-tab" onclick="switchAdminTab('habits')">📋 Habituiri</button>
+        <button class="admin-tab" onclick="switchAdminTab('messages')">💬 Mesaje</button>
+        <button class="admin-tab" onclick="switchAdminTab('logs')">📜 Audit Logs</button>
+      </div>
+
+      <div id="admin-content">
+        <div class="loading"><div class="spinner"></div> Se încarcă...</div>
+      </div>
+    </div>
+
+  </main>
+</div>
+
+<!-- =====================================================
+     MODAL: Creare / Editare Habit
+===================================================== -->
+<div class="modal-overlay" id="habit-modal">
+  <div class="modal">
+    <div class="modal-header">
+      <h2 class="modal-title" id="habit-modal-title">Habit nou</h2>
+      <button class="modal-close" onclick="closeHabitModal()">✕</button>
+    </div>
+
+    <div id="habit-modal-error"></div>
+
+    <!-- Titlu habit -->
+    <div class="form-group">
+      <label class="form-label">Titlu *</label>
+      <input class="form-input" type="text" id="habit-title" placeholder="ex: Citesc 30 min pe zi">
+    </div>
+
+    <!-- Descriere -->
+    <div class="form-group">
+      <label class="form-label">Descriere (opțional)</label>
+      <textarea class="form-textarea" id="habit-desc" placeholder="De ce e important acest habit..."></textarea>
+    </div>
+
+    <!-- Icon -->
+    <div class="form-group">
+      <label class="form-label">Icon</label>
+      <div class="icon-picker" id="icon-picker">
+        <!-- Generate din JS -->
+      </div>
+    </div>
+
+    <!-- Culoare -->
+    <div class="form-group">
+      <label class="form-label">Culoare</label>
+      <div class="color-picker" id="color-picker">
+        <!-- Generate din JS -->
+      </div>
+    </div>
+
+    <!-- Frecvență -->
+    <div class="form-group">
+      <label class="form-label">Frecvență *</label>
+      <div class="freq-grid" id="freq-grid">
+        <div class="freq-opt selected" data-type="daily" onclick="selectFreq(this,'daily')">
+          <span class="freq-icon">☀️</span>
+          <strong>Zilnic</strong>
+          <div class="freq-label">O dată pe zi</div>
+        </div>
+        <div class="freq-opt" data-type="times_per_day" onclick="selectFreq(this,'times_per_day')">
+          <span class="freq-icon">🔁</span>
+          <strong>N ori/zi</strong>
+          <div class="freq-label">De mai multe ori</div>
+        </div>
+        <div class="freq-opt" data-type="weekly" onclick="selectFreq(this,'weekly')">
+          <span class="freq-icon">📆</span>
+          <strong>Săptămânal</strong>
+          <div class="freq-label">O dată/săpt.</div>
+        </div>
+        <div class="freq-opt" data-type="times_per_week" onclick="selectFreq(this,'times_per_week')">
+          <span class="freq-icon">📅</span>
+          <strong>N ori/săpt.</strong>
+          <div class="freq-label">De mai multe ori</div>
+        </div>
+        <div class="freq-opt" data-type="hourly" onclick="selectFreq(this,'hourly')">
+          <span class="freq-icon">⏰</span>
+          <strong>La X ore</strong>
+          <div class="freq-label">Interval ore</div>
+        </div>
+        <div class="freq-opt" data-type="interval_days" onclick="selectFreq(this,'interval_days')">
+          <span class="freq-icon">🗓️</span>
+          <strong>La X zile</strong>
+          <div class="freq-label">Interval zile</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Valoare frecvență (N) -->
+    <div class="form-group" id="freq-value-group">
+      <label class="form-label" id="freq-value-label">Numărul de ori *</label>
+      <input class="form-input" type="number" id="habit-freq-value" min="1" max="100" value="1">
+    </div>
+
+    <!-- Ora țintă -->
+    <div class="form-group">
+      <label class="form-label">Ora țintă (opțional)</label>
+      <input class="form-input" type="time" id="habit-target-time">
+    </div>
+
+    <!-- Vizibilitate publică -->
+    <div class="form-group" style="display:flex;align-items:center;gap:12px">
+      <input type="checkbox" id="habit-public" style="width:16px;height:16px;accent-color:var(--accent)">
+      <label for="habit-public" style="cursor:pointer;font-size:14px">
+        🌐 Habit public (vizibil în feed-ul social)
+      </label>
+    </div>
+
+    <div style="display:flex;gap:10px;margin-top:8px">
+      <button class="btn btn-secondary" style="flex:1" onclick="closeHabitModal()">Anulează</button>
+      <button class="btn btn-primary" style="flex:1" id="habit-save-btn" onclick="saveHabit()">💾 Salvează</button>
+    </div>
+  </div>
+</div>
+
+<!-- =====================================================
+     MODAL: Trimite Mesaj de Încurajare
+===================================================== -->
+<div class="modal-overlay" id="message-modal">
+  <div class="modal">
+    <div class="modal-header">
+      <h2 class="modal-title">✉️ Trimite Încurajare</h2>
+      <button class="modal-close" onclick="closeSendMessage()">✕</button>
+    </div>
+    <div id="message-modal-error"></div>
+    <div class="form-group">
+      <label class="form-label">Destinatar</label>
+      <input class="form-input" type="text" id="msg-receiver" placeholder="Username-ul destinatarului">
+    </div>
+    <div class="form-group" id="msg-habit-group" style="display:none">
+      <label class="form-label">Legat de habitul (opțional)</label>
+      <input class="form-input" type="text" id="msg-habit-name" readonly style="opacity:0.7">
+      <input type="hidden" id="msg-habit-id">
+    </div>
+    <div class="form-group">
+      <label class="form-label">Mesaj de încurajare (max 500 caractere)</label>
+      <textarea class="form-textarea" id="msg-content" placeholder="Scrie ceva motivant..."></textarea>
+      <div style="font-size:11px;color:var(--text2);text-align:right;margin-top:4px">
+        <span id="msg-char-count">0</span>/500
+      </div>
+    </div>
+    <div style="display:flex;gap:10px">
+      <button class="btn btn-secondary" style="flex:1" onclick="closeSendMessage()">Anulează</button>
+      <button class="btn btn-primary" style="flex:1" onclick="sendMessage()">📨 Trimite</button>
+    </div>
+  </div>
+</div>
+
+<!-- Toast notification -->
+<div id="toast"></div>
+
+<!-- =====================================================
+     JAVASCRIPT - Logica principală a aplicației
+===================================================== -->
+
+    <!-- JavaScript - module-uri separate -->
+    <script src="state.js"></script>
+    <script src="auth.js"></script>
+    <script src="habits.js"></script>
+    <script src="calendar.js"></script>
+    <script src="feed.js"></script>
+    <script src="messages.js"></script>
+    <script src="admin.js"></script>
+    <script src="friends.js"></script>
+    <script src="app.js"></script>
+
+</body>
+</html>

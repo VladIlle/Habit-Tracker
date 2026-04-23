@@ -1,0 +1,1048 @@
+/* HabitFlow - Stiluri principale */
+
+/* =====================================================
+       VARIABILE CSS - Paleta de culori și spațieri
+    ===================================================== */
+    :root {
+      --bg:        #0f0f13;       /* fundal principal dark */
+      --bg2:       #17171e;       /* fundal card */
+      --bg3:       #1e1e28;       /* fundal input / hover */
+      --border:    #2a2a38;       /* borduri subtile */
+      --text:      #e8e8f0;       /* text principal */
+      --text2:     #8888aa;       /* text secundar */
+      --accent:    #a78bfa;       /* violet lavender - accent principal */
+      --accent2:   #7c3aed;       /* violet închis */
+      --gold:      #fbbf24;       /* auriu pentru like-uri */
+      --green:     #34d399;       /* verde pentru completări */
+      --red:       #f87171;       /* roșu pentru erori/ban */
+      --blue:      #60a5fa;       /* albastru pentru info */
+      --radius:    12px;
+      --radius-sm: 8px;
+      --shadow:    0 4px 24px rgba(0,0,0,0.4);
+      --transition: 0.2s ease;
+    }
+
+    /* =====================================================
+       RESET ȘI BAZE
+    ===================================================== */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    html, body {
+      height: 100%;
+      font-family: 'DM Sans', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      font-size: 15px;
+      line-height: 1.6;
+      overflow: hidden; /* SPA: nu scroll pe body */
+    }
+
+    /* Scrollbar personalizat */
+    ::-webkit-scrollbar { width: 5px; }
+    ::-webkit-scrollbar-track { background: var(--bg2); }
+    ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 9px; }
+    ::-webkit-scrollbar-thumb:hover { background: var(--accent); }
+
+    /* =====================================================
+       LAYOUT PRINCIPAL: Sidebar + Content
+    ===================================================== */
+    #app {
+      display: flex;
+      height: 100vh;
+      overflow: hidden;
+    }
+
+    /* ---- Sidebar de navigare ---- */
+    #sidebar {
+      width: 220px;
+      min-width: 220px;
+      background: var(--bg2);
+      border-right: 1px solid var(--border);
+      display: flex;
+      flex-direction: column;
+      padding: 24px 0;
+      transition: transform var(--transition);
+      z-index: 100;
+    }
+
+    .sidebar-logo {
+      padding: 0 20px 24px;
+      font-family: 'Syne', sans-serif;
+      font-size: 22px;
+      font-weight: 800;
+      background: linear-gradient(135deg, var(--accent), #60a5fa);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      letter-spacing: -0.5px;
+    }
+    .sidebar-logo span { opacity: 0.7; font-weight: 400; }
+
+    .nav-section {
+      padding: 0 12px;
+      flex: 1;
+    }
+    .nav-label {
+      font-size: 10px;
+      text-transform: uppercase;
+      letter-spacing: 1.5px;
+      color: var(--text2);
+      padding: 12px 8px 6px;
+      font-weight: 600;
+    }
+
+    /* Butoane de navigare */
+    .nav-btn {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      width: 100%;
+      padding: 10px 12px;
+      border: none;
+      background: transparent;
+      color: var(--text2);
+      border-radius: var(--radius-sm);
+      cursor: pointer;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 14px;
+      font-weight: 500;
+      transition: all var(--transition);
+      position: relative;
+      text-align: left;
+    }
+    .nav-btn:hover { background: var(--bg3); color: var(--text); }
+    .nav-btn.active { background: var(--bg3); color: var(--accent); }
+    .nav-btn .icon { font-size: 18px; width: 22px; text-align: center; }
+
+    /* Badge pentru mesaje necitite */
+    .nav-badge {
+      margin-left: auto;
+      background: var(--accent);
+      color: white;
+      font-size: 10px;
+      font-weight: 700;
+      padding: 2px 6px;
+      border-radius: 20px;
+      min-width: 18px;
+      text-align: center;
+    }
+
+    /* Buton logout jos sidebar */
+    .sidebar-footer {
+      padding: 12px;
+      border-top: 1px solid var(--border);
+    }
+    .user-card {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 10px 8px;
+      border-radius: var(--radius-sm);
+      cursor: default;
+    }
+    .user-avatar {
+      width: 32px; height: 32px;
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 13px; font-weight: 700; color: white;
+      flex-shrink: 0;
+    }
+    .user-info { flex: 1; min-width: 0; }
+    .user-name {
+      font-size: 13px; font-weight: 600;
+      white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+    }
+    .user-role {
+      font-size: 11px; color: var(--text2);
+    }
+
+    /* ---- Content Area ---- */
+    #content {
+      flex: 1;
+      overflow-y: auto;
+      padding: 32px;
+      position: relative;
+    }
+
+    /* =====================================================
+       PAGINA DE AUTENTIFICARE (login / register)
+    ===================================================== */
+    #auth-page {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: var(--bg);
+      position: fixed; inset: 0; z-index: 200;
+    }
+    #auth-page.hidden { display: none; }
+
+    .auth-box {
+      width: 420px;
+      background: var(--bg2);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 40px;
+      box-shadow: var(--shadow);
+    }
+    .auth-logo {
+      text-align: center;
+      font-family: 'Syne', sans-serif;
+      font-size: 32px;
+      font-weight: 800;
+      background: linear-gradient(135deg, var(--accent), #60a5fa);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      margin-bottom: 8px;
+    }
+    .auth-tagline {
+      text-align: center;
+      color: var(--text2);
+      margin-bottom: 32px;
+      font-size: 14px;
+    }
+    .auth-tabs {
+      display: flex;
+      background: var(--bg3);
+      border-radius: var(--radius-sm);
+      padding: 4px;
+      margin-bottom: 24px;
+    }
+    .auth-tab {
+      flex: 1;
+      padding: 8px;
+      text-align: center;
+      border: none;
+      background: transparent;
+      color: var(--text2);
+      font-family: 'DM Sans', sans-serif;
+      font-size: 14px;
+      font-weight: 500;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: all var(--transition);
+    }
+    .auth-tab.active {
+      background: var(--bg2);
+      color: var(--text);
+      box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+    }
+
+    /* =====================================================
+       COMPONENTE COMUNE: Input, Button, Card
+    ===================================================== */
+    .form-group { margin-bottom: 16px; }
+    .form-label {
+      display: block;
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--text2);
+      margin-bottom: 6px;
+    }
+    .form-input, .form-select, .form-textarea {
+      width: 100%;
+      background: var(--bg3);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      padding: 10px 14px;
+      color: var(--text);
+      font-family: 'DM Sans', sans-serif;
+      font-size: 14px;
+      transition: border-color var(--transition);
+      outline: none;
+    }
+    .form-input:focus, .form-select:focus, .form-textarea:focus {
+      border-color: var(--accent);
+    }
+    .form-select option { background: var(--bg2); }
+    .form-textarea { resize: vertical; min-height: 80px; }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      padding: 10px 20px;
+      border: none;
+      border-radius: var(--radius-sm);
+      cursor: pointer;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 14px;
+      font-weight: 600;
+      transition: all var(--transition);
+      white-space: nowrap;
+    }
+    .btn-primary {
+      background: var(--accent);
+      color: white;
+    }
+    .btn-primary:hover { background: var(--accent2); transform: translateY(-1px); }
+    .btn-secondary {
+      background: var(--bg3);
+      color: var(--text);
+      border: 1px solid var(--border);
+    }
+    .btn-secondary:hover { border-color: var(--accent); color: var(--accent); }
+    .btn-danger { background: #7f1d1d; color: var(--red); }
+    .btn-danger:hover { background: #991b1b; }
+    .btn-sm { padding: 6px 14px; font-size: 13px; }
+    .btn-full { width: 100%; }
+    .btn:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
+
+    /* Card generic */
+    .card {
+      background: var(--bg2);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 20px;
+      transition: border-color var(--transition);
+    }
+    .card:hover { border-color: var(--accent); }
+
+    /* Titlu de secțiune */
+    .section-title {
+      font-family: 'Syne', sans-serif;
+      font-size: 22px;
+      font-weight: 700;
+      margin-bottom: 24px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .section-title .title-icon { font-size: 28px; }
+
+    /* Mesaj de eroare */
+    .error-msg {
+      background: rgba(248,113,113,0.1);
+      border: 1px solid rgba(248,113,113,0.3);
+      border-radius: var(--radius-sm);
+      padding: 10px 14px;
+      color: var(--red);
+      font-size: 13px;
+      margin-bottom: 16px;
+    }
+    .success-msg {
+      background: rgba(52,211,153,0.1);
+      border: 1px solid rgba(52,211,153,0.3);
+      border-radius: var(--radius-sm);
+      padding: 10px 14px;
+      color: var(--green);
+      font-size: 13px;
+      margin-bottom: 16px;
+    }
+
+    /* Toast notification */
+    #toast {
+      position: fixed; bottom: 24px; right: 24px;
+      background: var(--bg2);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 14px 20px;
+      font-size: 14px;
+      box-shadow: var(--shadow);
+      z-index: 9999;
+      transform: translateY(80px);
+      opacity: 0;
+      transition: all 0.3s ease;
+      max-width: 320px;
+    }
+    #toast.show { transform: translateY(0); opacity: 1; }
+    #toast.success { border-left: 3px solid var(--green); }
+    #toast.error   { border-left: 3px solid var(--red); }
+    #toast.info    { border-left: 3px solid var(--blue); }
+
+    /* =====================================================
+       HABIT CARDS - Dashboard
+    ===================================================== */
+    .habits-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 16px;
+    }
+
+    .habit-card {
+      background: var(--bg2);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 20px;
+      position: relative;
+      overflow: hidden;
+      transition: all var(--transition);
+    }
+    .habit-card::before {
+      content: '';
+      position: absolute;
+      left: 0; top: 0; bottom: 0;
+      width: 3px;
+      background: var(--habit-color, var(--accent));
+      border-radius: 3px 0 0 3px;
+    }
+    .habit-card:hover { border-color: var(--habit-color, var(--accent)); transform: translateY(-2px); }
+    .habit-card.completed-full { opacity: 0.7; }
+
+    .habit-header {
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      margin-bottom: 12px;
+    }
+    .habit-icon {
+      width: 42px; height: 42px;
+      border-radius: 10px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 20px;
+      background: rgba(255,255,255,0.06);
+      flex-shrink: 0;
+    }
+    .habit-meta { flex: 1; min-width: 0; }
+    .habit-title {
+      font-family: 'Syne', sans-serif;
+      font-size: 15px;
+      font-weight: 700;
+      white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+    }
+    .habit-freq {
+      font-size: 12px;
+      color: var(--text2);
+      margin-top: 2px;
+    }
+
+    /* Progress bar pentru completări */
+    .habit-progress {
+      margin: 12px 0;
+    }
+    .progress-label {
+      display: flex;
+      justify-content: space-between;
+      font-size: 12px;
+      color: var(--text2);
+      margin-bottom: 4px;
+    }
+    .progress-bar {
+      height: 4px;
+      background: var(--bg3);
+      border-radius: 2px;
+      overflow: hidden;
+    }
+    .progress-fill {
+      height: 100%;
+      background: var(--habit-color, var(--accent));
+      border-radius: 2px;
+      transition: width 0.5s ease;
+    }
+
+    /* Buton de completare */
+    .habit-actions {
+      display: flex;
+      gap: 8px;
+      margin-top: 14px;
+    }
+    .complete-btn {
+      flex: 1;
+      padding: 8px 12px;
+      border: 1px solid var(--habit-color, var(--accent));
+      border-radius: var(--radius-sm);
+      background: transparent;
+      color: var(--habit-color, var(--accent));
+      font-family: 'DM Sans', sans-serif;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all var(--transition);
+      display: flex; align-items: center; justify-content: center; gap: 6px;
+    }
+    .complete-btn:hover {
+      background: var(--habit-color, var(--accent));
+      color: white;
+    }
+    .complete-btn.done {
+      background: rgba(52,211,153,0.1);
+      border-color: var(--green);
+      color: var(--green);
+    }
+
+    .habit-edit-btn {
+      padding: 8px 10px;
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      background: transparent;
+      color: var(--text2);
+      cursor: pointer;
+      transition: all var(--transition);
+      font-size: 14px;
+    }
+    .habit-edit-btn:hover { border-color: var(--accent); color: var(--accent); }
+
+    /* =====================================================
+       CALENDAR VIEW
+    ===================================================== */
+    .calendar-nav {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      margin-bottom: 24px;
+    }
+    .cal-month {
+      font-family: 'Syne', sans-serif;
+      font-size: 20px;
+      font-weight: 700;
+      flex: 1;
+    }
+
+    .calendar-grid {
+      display: grid;
+      grid-template-columns: repeat(7, 1fr);
+      gap: 4px;
+    }
+    .cal-day-header {
+      text-align: center;
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--text2);
+      padding: 8px 4px;
+    }
+    .cal-day {
+      aspect-ratio: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      border-radius: var(--radius-sm);
+      cursor: pointer;
+      position: relative;
+      font-size: 13px;
+      font-weight: 500;
+      transition: all var(--transition);
+      min-height: 44px;
+    }
+    .cal-day:hover { background: var(--bg3); }
+    .cal-day.empty { cursor: default; }
+    .cal-day.today {
+      background: rgba(167,139,250,0.12);
+      border: 1px solid var(--accent);
+      color: var(--accent);
+    }
+    .cal-day.has-completions::after {
+      content: '';
+      position: absolute;
+      bottom: 4px;
+      left: 50%; transform: translateX(-50%);
+      width: 6px; height: 6px;
+      border-radius: 50%;
+      background: var(--green);
+    }
+    .cal-day.full-day::after { background: var(--gold); }
+    .cal-day-num { font-size: 14px; }
+    .cal-day-count {
+      font-size: 10px;
+      color: var(--text2);
+    }
+
+    /* =====================================================
+       SOCIAL FEED
+    ===================================================== */
+    .feed-card {
+      background: var(--bg2);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 20px;
+      margin-bottom: 12px;
+      transition: border-color var(--transition);
+    }
+    .feed-card:hover { border-color: var(--border); }
+
+    .feed-header {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 14px;
+    }
+    .feed-avatar {
+      width: 38px; height: 38px;
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 14px; font-weight: 700; color: white;
+    }
+    .feed-user-info { flex: 1; }
+    .feed-username { font-size: 14px; font-weight: 600; }
+    .feed-time { font-size: 12px; color: var(--text2); }
+
+    .feed-habit {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 12px;
+      background: var(--bg3);
+      border-radius: var(--radius-sm);
+      margin-bottom: 12px;
+    }
+    .feed-habit-icon {
+      width: 36px; height: 36px;
+      border-radius: 8px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 18px;
+    }
+    .feed-habit-info { flex: 1; }
+    .feed-habit-title { font-size: 14px; font-weight: 600; }
+    .feed-habit-freq { font-size: 12px; color: var(--text2); }
+
+    .feed-actions {
+      display: flex;
+      gap: 8px;
+    }
+    .like-btn {
+      padding: 6px 14px;
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      background: transparent;
+      color: var(--text2);
+      cursor: pointer;
+      font-size: 13px;
+      transition: all var(--transition);
+      display: flex; align-items: center; gap: 6px;
+    }
+    .like-btn:hover { border-color: var(--gold); color: var(--gold); }
+    .like-btn.liked { background: rgba(251,191,36,0.1); border-color: var(--gold); color: var(--gold); }
+    .encourage-btn {
+      padding: 6px 14px;
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      background: transparent;
+      color: var(--text2);
+      cursor: pointer;
+      font-size: 13px;
+      transition: all var(--transition);
+    }
+    .encourage-btn:hover { border-color: var(--accent); color: var(--accent); }
+
+    /* =====================================================
+       MESAJE
+    ===================================================== */
+    .messages-layout {
+      display: grid;
+      grid-template-columns: 280px 1fr;
+      gap: 16px;
+      height: calc(100vh - 180px);
+    }
+
+    .msg-list {
+      background: var(--bg2);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      overflow-y: auto;
+    }
+    .msg-list-header {
+      padding: 16px;
+      border-bottom: 1px solid var(--border);
+      font-weight: 600;
+      font-size: 14px;
+    }
+    .msg-item {
+      padding: 14px 16px;
+      border-bottom: 1px solid var(--border);
+      cursor: pointer;
+      transition: background var(--transition);
+      display: flex;
+      gap: 10px;
+      align-items: flex-start;
+    }
+    .msg-item:hover { background: var(--bg3); }
+    .msg-item.unread { background: rgba(167,139,250,0.05); }
+    .msg-item.active { background: var(--bg3); }
+    .msg-item-info { flex: 1; min-width: 0; }
+    .msg-item-from { font-size: 13px; font-weight: 600; }
+    .msg-item-preview {
+      font-size: 12px;
+      color: var(--text2);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .msg-item-time { font-size: 11px; color: var(--text2); flex-shrink: 0; }
+
+    .msg-content {
+      background: var(--bg2);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+    .msg-content-header {
+      padding: 16px 20px;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .msg-body {
+      flex: 1;
+      overflow-y: auto;
+      padding: 20px;
+    }
+    .msg-bubble {
+      background: var(--bg3);
+      border-radius: 12px 12px 12px 4px;
+      padding: 12px 16px;
+      max-width: 80%;
+      font-size: 14px;
+      line-height: 1.5;
+    }
+    .msg-meta { font-size: 11px; color: var(--text2); margin-top: 6px; }
+    .msg-empty {
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+      height: 100%;
+      color: var(--text2);
+      gap: 8px;
+    }
+    .msg-empty-icon { font-size: 48px; opacity: 0.3; }
+
+    /* =====================================================
+       ADMIN PANEL
+    ===================================================== */
+    .admin-tabs {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 24px;
+      border-bottom: 1px solid var(--border);
+      padding-bottom: 12px;
+    }
+    .admin-tab {
+      padding: 8px 16px;
+      border: none;
+      background: transparent;
+      color: var(--text2);
+      font-family: 'DM Sans', sans-serif;
+      font-size: 14px;
+      font-weight: 500;
+      cursor: pointer;
+      border-radius: var(--radius-sm);
+      transition: all var(--transition);
+    }
+    .admin-tab:hover { color: var(--text); }
+    .admin-tab.active { background: var(--bg3); color: var(--accent); }
+
+    /* Stat cards pentru admin */
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+      gap: 16px;
+      margin-bottom: 24px;
+    }
+    .stat-card {
+      background: var(--bg2);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 20px;
+      text-align: center;
+    }
+    .stat-value {
+      font-family: 'Syne', sans-serif;
+      font-size: 32px;
+      font-weight: 800;
+      color: var(--accent);
+    }
+    .stat-label { font-size: 13px; color: var(--text2); margin-top: 4px; }
+
+    /* Tabel admin */
+    .admin-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 13px;
+    }
+    .admin-table th {
+      text-align: left;
+      padding: 10px 14px;
+      color: var(--text2);
+      font-weight: 600;
+      border-bottom: 1px solid var(--border);
+      font-size: 12px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+    .admin-table td {
+      padding: 10px 14px;
+      border-bottom: 1px solid var(--border);
+      vertical-align: middle;
+    }
+    .admin-table tr:last-child td { border-bottom: none; }
+    .admin-table tr:hover td { background: var(--bg3); }
+
+    .badge {
+      display: inline-block;
+      padding: 2px 8px;
+      border-radius: 20px;
+      font-size: 11px;
+      font-weight: 600;
+    }
+    .badge-admin { background: rgba(167,139,250,0.2); color: var(--accent); }
+    .badge-user  { background: rgba(96,165,250,0.15); color: var(--blue); }
+    .badge-banned { background: rgba(248,113,113,0.15); color: var(--red); }
+    .badge-public { background: rgba(52,211,153,0.15); color: var(--green); }
+    .badge-deleted { background: rgba(248,113,113,0.1); color: var(--red); opacity: 0.7; }
+
+    /* =====================================================
+       MODAL
+    ===================================================== */
+    .modal-overlay {
+      position: fixed; inset: 0;
+      background: rgba(0,0,0,0.7);
+      backdrop-filter: blur(4px);
+      display: flex; align-items: center; justify-content: center;
+      z-index: 500;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity var(--transition);
+    }
+    .modal-overlay.open { opacity: 1; pointer-events: auto; }
+    .modal {
+      background: var(--bg2);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 28px;
+      width: 480px;
+      max-width: 95vw;
+      max-height: 85vh;
+      overflow-y: auto;
+      transform: scale(0.95);
+      transition: transform var(--transition);
+    }
+    .modal-overlay.open .modal { transform: scale(1); }
+    .modal-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 24px;
+    }
+    .modal-title {
+      font-family: 'Syne', sans-serif;
+      font-size: 18px;
+      font-weight: 700;
+    }
+    .modal-close {
+      width: 32px; height: 32px;
+      border: none;
+      background: var(--bg3);
+      color: var(--text2);
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 18px;
+      display: flex; align-items: center; justify-content: center;
+      transition: all var(--transition);
+    }
+    .modal-close:hover { color: var(--text); }
+
+    /* Selector de culori și icon-uri */
+    .color-picker, .icon-picker {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 4px;
+    }
+    .color-opt {
+      width: 28px; height: 28px;
+      border-radius: 50%;
+      cursor: pointer;
+      border: 2px solid transparent;
+      transition: transform var(--transition);
+    }
+    .color-opt:hover { transform: scale(1.2); }
+    .color-opt.selected { border-color: white; }
+    .icon-opt {
+      width: 36px; height: 36px;
+      border-radius: 8px;
+      background: var(--bg3);
+      border: 1px solid var(--border);
+      cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 18px;
+      transition: all var(--transition);
+    }
+    .icon-opt:hover, .icon-opt.selected {
+      border-color: var(--accent);
+      background: rgba(167,139,250,0.1);
+    }
+
+    /* Frecvență - grid de opțiuni */
+    .freq-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 8px;
+      margin-top: 4px;
+    }
+    .freq-opt {
+      padding: 10px;
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      cursor: pointer;
+      text-align: center;
+      font-size: 13px;
+      transition: all var(--transition);
+    }
+    .freq-opt:hover { border-color: var(--accent); }
+    .freq-opt.selected {
+      border-color: var(--accent);
+      background: rgba(167,139,250,0.1);
+      color: var(--accent);
+    }
+    .freq-opt .freq-icon { font-size: 18px; display: block; margin-bottom: 2px; }
+    .freq-opt .freq-label { font-size: 11px; color: var(--text2); }
+
+    /* =====================================================
+       EMPTY STATES & LOADING
+    ===================================================== */
+    .empty-state {
+      text-align: center;
+      padding: 60px 20px;
+      color: var(--text2);
+    }
+    .empty-state .empty-icon { font-size: 64px; display: block; margin-bottom: 16px; opacity: 0.4; }
+    .empty-state h3 { font-family: 'Syne', sans-serif; font-size: 18px; color: var(--text); margin-bottom: 8px; }
+    .empty-state p { font-size: 14px; max-width: 300px; margin: 0 auto 20px; }
+
+    .loading {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 40px;
+      gap: 8px;
+      color: var(--text2);
+    }
+    .spinner {
+      width: 20px; height: 20px;
+      border: 2px solid var(--border);
+      border-top-color: var(--accent);
+      border-radius: 50%;
+      animation: spin 0.7s linear infinite;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    /* =====================================================
+       DASHBOARD STATS BAR
+    ===================================================== */
+    .dashboard-stats {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+      gap: 12px;
+      margin-bottom: 28px;
+    }
+    .ds-card {
+      background: var(--bg2);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 16px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .ds-icon { font-size: 24px; }
+    .ds-info {}
+    .ds-value { font-family: 'Syne', sans-serif; font-size: 22px; font-weight: 700; color: var(--accent); }
+    .ds-label { font-size: 12px; color: var(--text2); }
+
+    /* Responsive pentru ecrane mici */
+    @media (max-width: 768px) {
+      #sidebar { width: 60px; min-width: 60px; }
+      .nav-btn span:not(.icon) { display: none; }
+      .nav-label { display: none; }
+      .sidebar-logo { font-size: 14px; padding: 0 8px 20px; }
+      .user-name, .user-role { display: none; }
+      #content { padding: 16px; }
+      .messages-layout { grid-template-columns: 1fr; }
+    }
+
+    /* =====================================================
+       STILURI PRIETENI
+    ===================================================== */
+    .friend-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 10px 0;
+      border-bottom: 1px solid var(--border);
+    }
+    .friend-item:last-child { border-bottom: none; }
+    .friend-item-info { flex: 1; min-width: 0; }
+    .friend-item-name { font-size: 14px; font-weight: 600; }
+    .friend-item-sub  { font-size: 12px; color: var(--text2); }
+    .friend-item-actions { display: flex; gap: 6px; flex-shrink: 0; }
+
+    .search-result-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 10px 12px;
+      border-radius: var(--radius-sm);
+      transition: background var(--transition);
+    }
+    .search-result-item:hover { background: var(--bg3); }
+
+    .friend-habit-card {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 12px;
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      margin-bottom: 8px;
+      transition: border-color var(--transition);
+    }
+    .friend-habit-card:hover { border-color: var(--accent); }
+    .friend-habit-icon {
+      width: 38px; height: 38px;
+      border-radius: 8px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 18px;
+      background: rgba(255,255,255,0.06);
+      flex-shrink: 0;
+    }
+    .friend-habit-info { flex: 1; min-width: 0; }
+    .friend-habit-title { font-size: 14px; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .friend-habit-freq  { font-size: 12px; color: var(--text2); }
+
+/* =====================================================
+   CALENDAR - Habituiri per zi si completare retroactiva
+===================================================== */
+.cal-day.future {
+  /* Zilele viitoare sunt clickabile - se pot vedea habiturile planificate */
+  opacity: 0.6;
+}
+.cal-day.selected {
+  border-color: var(--accent) !important;
+  background: rgba(167,139,250,0.12);
+}
+
+.cal-section-label {
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--text2);
+  letter-spacing: .06em;
+  text-transform: uppercase;
+  margin-bottom: 8px;
+}
+
+.cal-habit-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 0;
+  border-bottom: 1px solid var(--border);
+}
+.cal-habit-row:last-child { border-bottom: none; }
+
+.cal-habit-icon {
+  width: 36px;
+  height: 36px;
+  border-radius: 8px;
+  border: 1px solid transparent;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+  flex-shrink: 0;
+}
+
+.cal-habit-info  { flex: 1; min-width: 0; }
+.cal-habit-name  { font-size: 14px; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.cal-habit-meta  { font-size: 12px; color: var(--text2); margin-top: 2px; }
+.cal-habit-actions { flex-shrink: 0; }
